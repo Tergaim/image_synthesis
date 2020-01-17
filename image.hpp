@@ -1,5 +1,5 @@
 #include <vector>
-#include "vec3.h"
+#include "vec3.hpp"
 #include <fstream>
 
 using std::endl;
@@ -37,7 +37,7 @@ class Image {
 
             for(int j=0;j<height; j++){
                 for(int i=0; i<width; i++) {
-                    const Vec3f color = pixels[j*width+i]*256;
+                    const Vec3f color = pixels[j*width+i]*255;
                     outfile << int(color[0]) << " "<< int(color[1]) << " "<< int(color[2]) <<endl;
                 }
                 outfile << endl;                 
