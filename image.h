@@ -37,7 +37,7 @@ class Image {
 
             for(int j=0;j<height; j++){
                 for(int i=0; i<width; i++) {
-                    const Vec3f color = pixels[j*height+i]*256;
+                    const Vec3f color = pixels[j*width+i]*256;
                     outfile << int(color[0]) << " "<< int(color[1]) << " "<< int(color[2]) <<endl;
                 }
                 outfile << endl;                 
@@ -52,7 +52,7 @@ class Image {
             for(int j=0;j<height; j++){
                 const float a = float(j)/height; 
                 for(int i=0; i<width; i++)
-                    pixels[j*height+i] = a*color;
+                    pixels[j*width+i] = a*color + (1-a)*pixels[j*width+i];
             }
         }
 

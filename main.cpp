@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
             std::cout << "Unknown argument: " << argv[i] << " at index " << i << std::endl;
         }
     }
-    Image picture = Image(w, h);
+    Image picture = Image(w, h, Vec3f(0,1,0));
     picture.fillBackground(Vec3f(1,0,0));
     picture.savePPM(filename);
 
