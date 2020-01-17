@@ -1,5 +1,6 @@
+#pragma ONCE
 #include <vector>
-#include "vec3.hpp"
+#include "src/vec3.hpp"
 #include <fstream>
 
 using std::endl;
@@ -7,9 +8,10 @@ using std::endl;
 class Image {
     // This class implements basic image manipulation.
     // Conventions:  (0,0) is in the up-left corner, x axis to the right, y axis to the bottom
+    std::vector< Vec3f> pixels;
+    int height, width; // height = nuber of lines, width = number of colors
+
     public:
-        std::vector< Vec3f> pixels;
-        int height, width; // height = nuber of lines, width = number of colors
 
         //Constructors
         Image(int w, int h){
@@ -57,6 +59,18 @@ class Image {
         }
 
         Vec3f at(int w, int h){
-            return pixels[h*height+w];
+            return pixels[h*width+w];
+        }
+
+        void set(int w, int h, Vec3f color) {
+            pixels[h*width+w] = color;
+        }
+
+        int get_height(){
+            return height;
+        }
+
+        int get_width(){
+            return width;
         }
 };
