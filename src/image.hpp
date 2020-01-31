@@ -1,4 +1,4 @@
-#pragma ONCE
+#pragma once
 #include <vector>
 #include "vec3.hpp"
 #include <fstream>
@@ -14,6 +14,8 @@ class Image {
     public:
 
         //Constructors
+        Image(){}
+
         Image(int w, int h){
             height = h;
             width = w;
@@ -21,12 +23,16 @@ class Image {
         }
 
         Image(int w, int h, Vec3f color){
-            for(int i=0; i<3; i++)
-                color[i] = (color[i]>1) ? 1 : color[i];
             height = h;
             width = w;
             pixels.resize(width*height, color);
         }
+
+        // Image(Image &pic){
+        //     height = pic.get_height();
+        //     width = pic.get_width();
+        //     pixels.resize(width*height, Vec3f());
+        // }
 
         // Save the image to PPM format with 256 colors. Erase pre-existing file without warning.
         void savePPM(const char* filename){
@@ -58,9 +64,8 @@ class Image {
             }
         }
 
-        Vec3f at(int w, int h){
-            return pixels[h*width+w];
-        }
+        inline const Vec3f & operator() (size_t x, size_t y) const { return pixels[y*width+x]; }
+    	inline Vec3f & operator() (size_t x, size_t y) { return pixels[y*width+x]; }
 
         void set(int w, int h, Vec3f color) {
             pixels[h*width+w] = color;

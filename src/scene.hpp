@@ -1,27 +1,101 @@
-#pragma ONCE
+#pragma once
+#include <fstream>
 #include <vector>
+#include <sstream>
 #include "vec3.hpp"
 #include "camera.hpp"
+#include "lightSource.hpp"
+#include "mesh.hpp"
 
-struct Scene {
+using std::vector;
 
-    std::vector<Vec3f> vertices;
-    std::vector<Vec3i> triangles;
+struct Scene
+{
+    vector<Mesh> meshes;
     Camera camera;
+    LightSource lightsource;
 
-    Scene(){
-        camera = Camera();
+    inline Scene(){};
+    virtual ~Scene(){};
+
+    void addTriangle(const Vec3f &p0, const Vec3f &p1, const Vec3f &p2)
+    {
+        Mesh mesh = Mesh();
+        float nT = mesh.vertexPositions().size();
+        mesh.vertexPositions().push_back(p0);
+        mesh.vertexPositions().push_back(p1);
+        mesh.vertexPositions().push_back(p2);
+        mesh.indexedTriangles().push_back(Vec3i(nT, nT + 1, nT + 2));
+        meshes.push_back(mesh);
     }
 
-    Scene(int w, int h){
-        camera = Camera(float(w)/h);
+    void addTriangle(const Vec3f &p0, const Vec3f &p1, const Vec3f &p2, Mesh &mesh)
+    {
+        float nT = mesh.vertexPositions().size();
+        mesh.vertexPositions().push_back(p0);
+        mesh.vertexPositions().push_back(p1);
+        mesh.vertexPositions().push_back(p2);
+        mesh.indexedTriangles().push_back(Vec3i(nT, nT + 1, nT + 2));
     }
 
-    void add_triangle(Vec3f p1, Vec3f p2, Vec3f p3) {
-        int l = vertices.size();
-        vertices.push_back(p1);
-        vertices.push_back(p2);
-        vertices.push_back(p3);
-        triangles.push_back(Vec3i(l, l+1, l+2));
+    void loadOFF(const std::string &filepath)
+    {
+        std::ifstream input(filepath);
+        Mesh mesh;
+        int nVertices, nFaces;
+        //read first line to check document format
+        std::string line;
+        std::getline(input, line);
+        if (line.substr(0, 3).compare("OFF") != 0)
+        {
+            cout << "file not in OFF format !" << endl;
+        }
+        else
+        {
+            //retrieve number of vertices and faces
+            std::getline(input, line);
+            std::istringstream iss(line);
+            iss >> nVertices >> nFaces;
+            cout << "nVertices : " << nVertices << endl
+                 << "nFaces : " << nFaces << endl;
+        }
+        //add vertices
+        for (int i = 0; i < nVertices; ++i)
+        {
+            std::getline(input, line);
+            std::istringstream iss(line);
+            Vec3f vertex;
+            iss >> vertex[0] >> vertex[1] >> vertex[2];
+            mesh.vertexPositions().push_back(vertex);
+            mesh.vertexNormals().push_back(Vec3f());
+        }
+        for (int k = 0; k < nFaces; ++k)
+        {
+            std::getline(input, line);
+            std::istringstream iss(line);
+            Vec3i triangle;
+            int faceDegree;
+            iss >> faceDegree;
+            if (faceDegree == 3)
+            {
+                iss >> triangle[0] >> triangle[1] >> triangle[2];
+            }
+            else
+            {
+                cout << "Non triangular face detected and ignored" << endl;
+            }
+            mesh.indexedTriangles().push_back(triangle);
+            Vec3f e0 = mesh.vertexPositions()[triangle[1]] - mesh.vertexPositions()[triangle[0]];
+            Vec3f e1 = mesh.vertexPositions()[triangle[2]] - mesh.vertexPositions()[triangle[0]];
+            Vec3f n = normalize(cross(e0, e1));
+            mesh.vertexNormals()[triangle[0]] += n;
+            mesh.vertexNormals()[triangle[1]] += n;
+            mesh.vertexNormals()[triangle[2]] += n;
+        }
+        for (int i = 0; i < nVertices; ++i)
+        {
+            mesh.vertexNormals()[i] = normalize(mesh.vertexNormals()[i]);
+        }
+        meshes.push_back(mesh);
     }
 };

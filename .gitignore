@@ -1,2 +1,4 @@
 savePPM
 build
+data/*
+!data/.gitkeep
