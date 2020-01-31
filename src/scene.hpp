@@ -1,7 +1,7 @@
 #pragma ONCE
 #include <vector>
-#include "src/vec3.hpp"
-#include "src/camera.hpp"
+#include "vec3.hpp"
+#include "camera.hpp"
 
 struct Scene {
 

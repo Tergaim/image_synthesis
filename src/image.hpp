@@ -1,6 +1,6 @@
 #pragma ONCE
 #include <vector>
-#include "src/vec3.hpp"
+#include "vec3.hpp"
 #include <fstream>
 
 using std::endl;
