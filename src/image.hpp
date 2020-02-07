@@ -43,8 +43,8 @@ class Image {
             outfile << width << " " << height << endl;
             outfile << 255 << endl;
 
-            for(int j=0;j<height; j++){
-                for(int i=0; i<width; i++) {
+            for(int j=height-1;j>=0; j--){
+                for(int i=width-1; i>=0; i--) {
                     const Vec3f color = pixels[j*width+i]*255;
                     outfile << int(color[0]) << " "<< int(color[1]) << " "<< int(color[2]) <<endl;
                 }

@@ -41,7 +41,7 @@ public:
   //   return false;
   // }
 
-  bool intersectTriangle(const Vec3f& p0, const Vec3f& p1, const Vec3f& p2, float& u, float& v, float& d){
+  bool intersectTriangle(const Vec3f& p0, const Vec3f& p1, const Vec3f& p2, float result[4]){
     float EPSILON=0.000001f;
     Vec3f e0 = p1-p0;
     Vec3f e1 = p2-p0;
@@ -52,16 +52,17 @@ public:
       return false;
     }
     Vec3f ovec = m_origin - p0;
-    d = -dot(ovec,e2)/det;
-    Vec3f hit = m_origin + d*m_direction;
+    result[3] = -dot(ovec,e2)/det;
+    Vec3f hit = m_origin + result[3]*m_direction;
     //u = dot(cross(p2-p1,hit-p1), a);
     //v = dot(cross(p0-p2,hit-p2), a);
-    v = dot(e2, cross(hit-p0,e1))/length(cross(e0,e1));
-    u = 1.f-v+dot(e2, cross(hit-p0,e0))/length(cross(e1,e0));
-    if(u<0 || v<0 || u+v>1){
+    result[1] = dot(e2, cross(hit-p0,e1))/length(cross(e0,e1));
+    result[0] = 1.f-result[1]+dot(e2, cross(hit-p0,e0))/length(cross(e1,e0));
+    result[2] = 1-result[0]-result[1];
+    if(result[0]<0 || result[1]<0 || result[0]+result[1]>1){
       return false;
     }
-    if(d>=0){
+    if(result[3]>=0){
       return true;
     }
     return false;
